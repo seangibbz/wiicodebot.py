@@ -1,3 +1,6 @@
+import os
+import datetime
+
 import discord
 client = discord.Client()
 
@@ -90,10 +93,27 @@ def getUsersAndCodesOf(game): # Displays list of users and friend codes for a sp
 def help(): # Bot user documentation
     pass
 
-def terminate(): # Kills the bot (valid only if used by devs)
+def saveBackup(): # Saves a backup of user data
+    if os.path.isfile('user_dictionary.txt'): # If a backup already exists, rename it with the date/time of replacement
+        now = datetime.datetime.now()
+        os.rename('user_dictionary.txt', 'user_dictionary_' + str(now.year) + '-' + str(now.month) + '-' + str(now.day) + '_' + str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(now.microsecond) + '.txt')
+    backup_file = open('user_dictionary.txt','w') # Create a new writable backup file
+    for element in full_dict.keys(): # Backup user data
+        backup_file.write(str(element) + ':' + str(full_dict[element]))
+
+def loadBackup(backupfile): # Loads backed up user data into the dictionary
     pass
 
+def terminate(): # Kills the bot (valid only if used by devs)
+    # Save the user dictionary to a backup file user_dictionary.txt, then use exit()
+    if len(full_dict) > 0: # If there is data to backup
+        saveBackup()
+    exit()
+
 def main():
+    if os.path.isfile('user_dictionary.txt'): # If a backup of the user dictionary exists, load it
+        loadBackup(open('user_dictionary.txt','r'))
+    
     client.run(token) # Log the bot into discord and run
 
 if __name__ == '__main__': # If run as the main program
