@@ -1,5 +1,5 @@
 # wiicodebot
-This is a Discord bot written in Python meant for the RiiConnect24 chatroom.
+This is a Discord bot written in Python (based on [discord.py](https://github.com/Rapptz/discord.py) "discord.py") meant for the RiiConnect24 chatroom.
 
 It handles user data regarding wii friend codes
 
@@ -24,3 +24,4 @@ It handles user data regarding wii friend codes
 
 ## Credits
 Sean Gibbons (seangibbz#5609 on Discord)
+Danny (Rapptz) for discord.py
