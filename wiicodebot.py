@@ -95,7 +95,6 @@ async def setCode(message,username, game, code): # Lets the user set his/her cod
     else:
         await client.send_message(message.channel,"Error: Game not in database. Please consult " + command_prefix + "help or " + command_prefix + "getAllGames")
 
-
 async def getAllGames(message): # Displays a list of the supported games by the bot
     await client.send_message(message.channel,"Currently Supported Games:")
     for element in sorted(game_list.keys()):
@@ -120,10 +119,29 @@ async def getUsersOf(message,game): # Displays list of users with friend codes r
             await client.send_message(message.channel," - " + element)
 
 async def getCode(message,username, game): # Returns the friend code of a specific user and game
-    pass
+    if game in game_list.keys():
+        if username in full_dict.keys():
+            if game in full_dict[username].keys():
+                await client.send_message(message.channel,full_dict[username][game])
+            else:
+                await client.send_message(message.channel,"Error: User has not registered with that game")
+        else:
+            await client.send_message(message.channel,"Error: User has no registered friend codes")
+    else:
+        await client.send_message(message.channel,"Error: Game not in database. Please consult " + command_prefix + "help or " + command_prefix + "getAllGames")
 
 async def getUsersAndCodesOf(message,game): # Displays list of users and friend codes for a specific game
-    pass
+    users_with_game = []
+    for element in sorted(full_dict.keys()):
+        user_data = full_dict[element]
+        if game in sorted(user_data.keys()):
+            users_with_game.append(element)
+    if len(users_with_game) == 0:
+        await client.send_message(message.channel,"No Users Registered with " + game_list[game])
+    else:
+        await client.send_message(message.channel,"Users Registered with " + game_list[game] + ":")
+        for element in users_with_game:
+            await client.send_message(message.channel," - " + element[:-5] + ": " + full_dict[element][game])
 
 async def help(message): # Bot user documentation
     pass
