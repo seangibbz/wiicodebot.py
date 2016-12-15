@@ -24,7 +24,10 @@ It handles user data regarding wii friend codes
 * Option for a user to delete their information entirely
 * Checking that friend codes are entered in the right format (`####-####-####-####` for `WII1`/`WII2`/`WII3`, `####-####-####` for everything else) - will implement via regular expressions later
 * Add optional additional argument in `!help` that will allow for explanation of specific commands (e.g. `!help setCode` will return documentation for `!setCode`)
+* A `getUsersOf` method to return a list of users who play a specific game
+* A `getUsersAndCodesOf` method to return a list of users and codes for a specific game
 
 ## Credits
 Sean Gibbons (seangibbz#5609 on Discord)
+
 Danny (Rapptz) for discord.py
