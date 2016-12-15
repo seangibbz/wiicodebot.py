@@ -25,7 +25,7 @@ async def on_message(message):
     content = message.content
     print(message)
     print(author + ':', content)
-    if content[0] == command_prefix:
+    if (content[0] == command_prefix) and (message.author != client.user):
         if content[1:].split(" ")[0] in command_list:
             await execute_command(message,content[1:],author)
         else: # If the user called the bot but with an invalid command
@@ -91,7 +91,7 @@ async def setCode(message,username, game, code): # Lets the user set his/her cod
         if username not in full_dict.keys():
             full_dict[username] = {}
         full_dict[username][game] = code
-        await client.send_message(message.channel,code + " successfully added for " + game + " for " + username[:-5])
+        await client.send_message(message.channel,code + " successfully added for " + game_list[game] + " for " + username[:-5])
     else:
         await client.send_message(message.channel,"Error: Game not in database. Please consult " + command_prefix + "help or " + command_prefix + "getAllGames")
 
@@ -101,9 +101,13 @@ async def getAllGames(message): # Displays a list of the supported games by the 
         await client.send_message(message.channel," - " + element + ": " + game_list[element])
 
 async def getAllUsers(message): # Displays a list of all users with registered friend codes
-    await client.send_message(message.channel,"Currently Registered Users:")
-    for element in sorted(full_dict.keys()):
-        await client.send_message(message.channel," - " + element[:-5])
+    if len(full_dict) > 0:
+        output_txt = "Currently Registered Users:" + '\n'
+        for element in sorted(full_dict.keys()):
+            output_txt = output_txt + " - " + element[:-5] + '\n'
+        await client.send_message(message.channel,output_txt)
+    else:
+        await client.send_message(message.channel,"No Currently Registered Users")
 
 async def getUsersOf(message,game): # Displays list of users with friend codes registered for a specific game
     users_with_game = []
@@ -114,9 +118,10 @@ async def getUsersOf(message,game): # Displays list of users with friend codes r
     if len(users_with_game) == 0:
         await client.send_message(message.channel,"No Users Registered with " + game_list[game])
     else:
-        await client.send_message(message.channel,"Users Registered with " + game_list[game] + ":")
+        output_txt = "Users Registered with " + game_list[game] + ":" + '\n'
         for element in users_with_game:
-            await client.send_message(message.channel," - " + element)
+            output_txt = output_txt + " - " + element + '\n'
+        await client.send_message(message.channel,output_txt)
 
 async def getCode(message,username, game): # Returns the friend code of a specific user and game
     if game in game_list.keys():
@@ -139,12 +144,16 @@ async def getUsersAndCodesOf(message,game): # Displays list of users and friend 
     if len(users_with_game) == 0:
         await client.send_message(message.channel,"No Users Registered with " + game_list[game])
     else:
-        await client.send_message(message.channel,"Users Registered with " + game_list[game] + ":")
+        output_txt = "Users Registered with " + game_list[game] + ":" + '\n'
         for element in users_with_game:
-            await client.send_message(message.channel," - " + element[:-5] + ": " + full_dict[element][game])
+            output_txt = output_txt + " - " + element[:-5] + ": " + full_dict[element][game] + '\n'
+        await client.send_message(message.channel,output_txt)
 
 async def help(message): # Bot user documentation
-    pass
+    output_txt = "Available commands:" + '\n'
+    for element in command_list:
+        output_txt = output_txt + " - " + command_prefix + element + '\n'
+    await client.send_message(message.channel,output_txt)
 
 def saveBackup(): # Saves a backup of user data
     if os.path.isfile('user_dictionary.txt'): # If a backup already exists, rename it with the date/time of replacement
@@ -157,10 +166,12 @@ def saveBackup(): # Saves a backup of user data
 def loadBackup(backupfile): # Loads backed up user data into the dictionary
     pass
 
-async def terminate(): # Kills the bot (valid only if used by devs)
+async def terminate(message,message_author): # Kills the bot (valid only if used by devs)
     # Save the user dictionary to a backup file user_dictionary.txt, then use exit()
     if len(full_dict) > 0: # If there is data to backup
+        await client.send_message(message.channel,"Creating Backup...")
         saveBackup()
+    await client.send_message(message.channel,"Exiting...")
     exit()
 
 def main():
