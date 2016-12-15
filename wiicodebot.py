@@ -27,9 +27,10 @@ async def on_message(message):
     print(author + ':', content)
     if content[0] == command_prefix:
         if content[1:].split(" ")[0] in command_list:
-            execute_command(content[1:],author)
+            await execute_command(message,content[1:],author)
         else: # If the user called the bot but with an invalid command
-            print("Error: Invalid command", content[1:])
+            await client.send_message(message.channel,"Error: Invalid command " + content)
+            print("Error: Invalid command " + content)
 
 @client.event
 async def on_ready(): # When the bot launches
@@ -39,64 +40,98 @@ async def on_ready(): # When the bot launches
     print('------')
     print(client)
 
-def execute_command(command_entered,command_author): # command syntax checker / launcher
+async def execute_command(message,command_entered,command_author): # command syntax checker / launcher
     user_args = command_entered.split(" ")
     base_command = user_args[0]
+    arg_error_usrmsg = "Error: Incorrect number of arguments. Please consult " + str(command_prefix) + "help"
     if base_command == 'setCode':
         if len(user_args) == 3:
-            setCode(command_author, user_args[1], user_args[2])
+            await setCode(message,command_author, user_args[1], user_args[2])
         else:
-            print("Error: Incorrect number of arguments")
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'getAllGames':
-        getAllGames()
+        if len(user_args) == 1:
+            await getAllGames(message)
+        else:
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'getAllUsers':
-        getAllUsers()
+        if len(user_args) == 1:
+            await getAllUsers(message)
+        else:
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'getUsersOf':
         if len(user_args) == 2:
-            getUsersOf(user_args[1])
+            await getUsersOf(message,user_args[1])
         else:
-            print("Error: Incorrect number of arguments")
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'getCode':
         if len(user_args) == 3:
-            getCode(user_args[1], user_args[2])
+            await getCode(message,user_args[1], user_args[2])
         else:
-            print("Error: Incorrect number of arguments")
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'getUsersAndCodesOf':
         if len(user_args) == 2:
-            getUsersAndCodesOf(user_args[1])
+            await getUsersAndCodesOf(message,user_args[1])
         else:
-            print("Error: Incorrect number of arguments")
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'help':
-        help()
+        if len(user_args) == 1:
+            await help(message)
+        else:
+            await client.send_message(message.channel,arg_error_usrmsg)
     elif base_command == 'terminate':
-        terminate(command_author)
+        if len(user_args) == 1:
+            await terminate(message,command_author)
+        else:
+            await client.send_message(message.channel,arg_error_usrmsg)
 
-def setCode(username, game, code): # Lets the user set his/her code for a specific game
+
+async def setCode(message,username, game, code): # Lets the user set his/her code for a specific game
+    if game in game_list.keys():
+        if username not in full_dict.keys():
+            full_dict[username] = {}
+        full_dict[username][game] = code
+        await client.send_message(message.channel,code + " successfully added for " + game + " for " + username[:-5])
+    else:
+        await client.send_message(message.channel,"Error: Game not in database. Please consult " + command_prefix + "help or " + command_prefix + "getAllGames")
+
+
+async def getAllGames(message): # Displays a list of the supported games by the bot
+    await client.send_message(message.channel,"Currently Supported Games:")
+    for element in sorted(game_list.keys()):
+        await client.send_message(message.channel," - " + element + ": " + game_list[element])
+
+async def getAllUsers(message): # Displays a list of all users with registered friend codes
+    await client.send_message(message.channel,"Currently Registered Users:")
+    for element in sorted(full_dict.keys()):
+        await client.send_message(message.channel," - " + element[:-5])
+
+async def getUsersOf(message,game): # Displays list of users with friend codes registered for a specific game
+    users_with_game = []
+    for element in sorted(full_dict.keys()):
+        user_data = full_dict[element]
+        if game in sorted(user_data.keys()):
+            users_with_game.append(element[:-5])
+    if len(users_with_game) == 0:
+        await client.send_message(message.channel,"No Users Registered with " + game_list[game])
+    else:
+        await client.send_message(message.channel,"Users Registered with " + game_list[game] + ":")
+        for element in users_with_game:
+            await client.send_message(message.channel," - " + element)
+
+async def getCode(message,username, game): # Returns the friend code of a specific user and game
     pass
 
-def getAllGames(): # Displays a list of the supported games by the bot
-    for element in sorted(game_list.keys):
-        print(game_list[element])
-
-def getAllUsers(): # Displays a list of all users with registered friend codes
+async def getUsersAndCodesOf(message,game): # Displays list of users and friend codes for a specific game
     pass
 
-def getUsersOf(game): # Displays list of users with friend codes registered for a specific game
-    pass
-
-def getCode(username, game): # Returns the friend code of a specific user and game
-    pass
-
-def getUsersAndCodesOf(game): # Displays list of users and friend codes for a specific game
-    pass
-
-def help(): # Bot user documentation
+async def help(message): # Bot user documentation
     pass
 
 def saveBackup(): # Saves a backup of user data
     if os.path.isfile('user_dictionary.txt'): # If a backup already exists, rename it with the date/time of replacement
         now = datetime.datetime.now()
-        os.rename('user_dictionary.txt', 'user_dictionary_' + str(now.year) + '-' + str(now.month) + '-' + str(now.day) + '_' + str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(now.microsecond) + '.txt')
+        os.rename('user_dictionary.txt', 'user_dictionary_' + now.strftime("%Y-%m-%d_%H-%M-%S") + '-' + str(now.microsecond) + '.txt')
     backup_file = open('user_dictionary.txt','w') # Create a new writable backup file
     for element in full_dict.keys(): # Backup user data
         backup_file.write(str(element) + ':' + str(full_dict[element]))
@@ -104,7 +139,7 @@ def saveBackup(): # Saves a backup of user data
 def loadBackup(backupfile): # Loads backed up user data into the dictionary
     pass
 
-def terminate(): # Kills the bot (valid only if used by devs)
+async def terminate(): # Kills the bot (valid only if used by devs)
     # Save the user dictionary to a backup file user_dictionary.txt, then use exit()
     if len(full_dict) > 0: # If there is data to backup
         saveBackup()
