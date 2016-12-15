@@ -21,6 +21,8 @@ It handles user data regarding wii friend codes
 * Option to delete games/codes from a user’s information
 * Option for a user to delete their information entirely
 * Checking that friend codes are entered in the right format (`####-####-####-####` for `WII1`/`WII2`/`WII3`, `####-####-####` for everything else) - will implement via regular expressions later
+* Create a separate !backup command for the devs to use, that’s not dependent on !terminate. That way they can make backups of the database without having to kill the bot
+* Make getCode function disregard the “@“ symbol at the start of mentions when searching for users
 
 ## Credits
 Sean Gibbons (seangibbz#5609 on Discord)

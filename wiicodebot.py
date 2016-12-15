@@ -91,20 +91,22 @@ async def setCode(message,username, game, code): # Lets the user set his/her cod
         if username not in full_dict.keys():
             full_dict[username] = {}
         full_dict[username][game] = code
-        await client.send_message(message.channel,code + " successfully added for " + game_list[game] + " for " + username[:-5])
+        await client.send_message(message.channel,code + " successfully added as " + game_list[game] + " for " + username[:-5])
     else:
         await client.send_message(message.channel,"Error: Game not in database. Please consult " + command_prefix + "help or " + command_prefix + "getAllGames")
 
 async def getAllGames(message): # Displays a list of the supported games by the bot
-    await client.send_message(message.channel,"Currently Supported Games:")
+    output_txt = "Currently Supported Games:"
+    
     for element in sorted(game_list.keys()):
-        await client.send_message(message.channel," - " + element + ": " + game_list[element])
+        output_txt = output_txt + '\n' + " - " + element + ": " + game_list[element]
+    await client.send_message(message.channel,output_txt)
 
 async def getAllUsers(message): # Displays a list of all users with registered friend codes
     if len(full_dict) > 0:
-        output_txt = "Currently Registered Users:" + '\n'
+        output_txt = "Currently Registered Users:"
         for element in sorted(full_dict.keys()):
-            output_txt = output_txt + " - " + element[:-5] + '\n'
+            output_txt = output_txt + '\n' + " - " + element[:-5]
         await client.send_message(message.channel,output_txt)
     else:
         await client.send_message(message.channel,"No Currently Registered Users")
@@ -118,9 +120,9 @@ async def getUsersOf(message,game): # Displays list of users with friend codes r
     if len(users_with_game) == 0:
         await client.send_message(message.channel,"No Users Registered with " + game_list[game])
     else:
-        output_txt = "Users Registered with " + game_list[game] + ":" + '\n'
+        output_txt = "Users Registered with " + game_list[game] + ":"
         for element in users_with_game:
-            output_txt = output_txt + " - " + element + '\n'
+            output_txt = output_txt + '\n' + " - " + element
         await client.send_message(message.channel,output_txt)
 
 async def getCode(message,username, game): # Returns the friend code of a specific user and game
@@ -144,15 +146,15 @@ async def getUsersAndCodesOf(message,game): # Displays list of users and friend 
     if len(users_with_game) == 0:
         await client.send_message(message.channel,"No Users Registered with " + game_list[game])
     else:
-        output_txt = "Users Registered with " + game_list[game] + ":" + '\n'
+        output_txt = "Users Registered with " + game_list[game] + ":"
         for element in users_with_game:
-            output_txt = output_txt + " - " + element[:-5] + ": " + full_dict[element][game] + '\n'
+            output_txt = output_txt + '\n' + " - " + element[:-5] + ": " + full_dict[element][game]
         await client.send_message(message.channel,output_txt)
 
 async def help(message): # Bot user documentation
-    output_txt = "Available commands:" + '\n'
+    output_txt = "Available commands:"
     for element in command_list:
-        output_txt = output_txt + " - " + command_prefix + element + '\n'
+        output_txt = output_txt + '\n' + " - " + command_prefix + element
     await client.send_message(message.channel,output_txt)
 
 def saveBackup(): # Saves a backup of user data
