@@ -5,12 +5,16 @@ import urllib3
 urllib3.disable_warnings() # Disables SSL console warning
 
 full_dict = {} # Creates base dictionary
-game_list = {'WII1':'Wii Friend Code 1', 'WII2':'Wii Friend Code 2', 'WII3':'Wii Friend Code 3', 'MKW':'Mario Kart Wii (Wiimmfi)', 'ACCF':'Animal Crossing: City Folk (Wiimmfi)', 'SSBB':'Super Smash Bros. Brawl (Wiimmfi)'] # list of supported games
+    # Entries will take the form {'user1':{'game1a':'game1a-friendcode', 'game1b':'game1b-friendcode'}, 'user2':{'game2a':'game2a-friendcode', 'game1b':'game1b-friendcode'}}
 
-token = 'MjU4ODg3MjMzODA3OTc0NDAw.CzQDQQ.LH-rOrbRTZ_DxlGcfevg6j3AgG4' # Bot Token
+game_list = {'WII1':"Wii Friend Code 1", 'WII2':"Wii Friend Code 2", 'WII3':"Wii Friend Code 3", 'MKW':"Mario Kart Wii (Wiimmfi)", 'ACCF':"Animal Crossing: City Folk (Wiimmfi)", 'SSBB':"Super Smash Bros. Brawl (Wiimmfi)"] # list of supported games
+
+tokenfile = open('token.txt') # Private bot token file
+token = tokenfile.read()[:-1]
+tokenfile.close()
 
 command_prefix = '!'
-command_list = ['setCode','getAllGames','getAllUsers','getUsersOf','getCode','getUsersAndCodesOf','help']
+command_list = ['setCode','getAllGames','getAllUsers','getUsersOf','getCode','getUsersAndCodesOf','help','terminate']
 
 @client.event
 async def on_message(message):
@@ -53,6 +57,8 @@ def getUsersAndCodesOf(game): # Displays list of users and friend codes for a sp
 def help(): # Bot user documentation
     pass
 
+def terminate(): # Kills the bot (valid only if used by devs)
+    pass
 
 def main():
     client.run(token) # Log the bot into discord and run
