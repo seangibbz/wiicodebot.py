@@ -1,4 +1,6 @@
 # wiicodebot
+NOTE: This project has halted development in favour of Seriel 💖’s sleeker javascript-based RiiConnect24 bot
+
 This is a Discord bot written in Python (based on [discord.py](https://github.com/Rapptz/discord.py) "discord.py") meant for the RiiConnect24 chatroom.
 
 It handles user data regarding wii friend codes
