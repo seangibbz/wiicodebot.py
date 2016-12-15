@@ -14,6 +14,7 @@ command_list = ['setCode','getAllGames','getAllUsers','getUsersOf','getCode','ge
 
 @client.event
 async def on_message(message):
+    author = message.author
     content = message.content
     print(str(message) + ':', content)
     if content[0] == command_prefix:
