@@ -19,7 +19,7 @@ token = tokenfile.read()[:-1]
 tokenfile.close()
 
 command_prefix = '!'
-command_list = ['setCode','getAllGames','getAllUsers','getUsersOf','getCode','getUsersAndCodesOf','help','terminate','backup']
+command_list = ['setCode','getAllGames','getAllUsers','getUsersOf','getCode','getUsersAndCodesOf','help','terminate','backup','getUserCodes']
 
 
 @client.event
@@ -94,6 +94,11 @@ async def execute_command(message,command_entered,command_author): # command syn
             await backup(message,command_author)
         else:
             await client.send_message(message.channel,arg_error_usrmsg)
+    elif base_command.lower() == 'getusercodes':
+        if len(user_args) == 2:
+            await getUserCodes(message,user_args[1])
+        else:
+            await client.send_message(message.channel,arg_error_usrmsg)
 
 
 async def setCode(message,username, game, code): # Lets the user set his/her code for a specific game
@@ -137,6 +142,19 @@ async def getUsersOf(message,game): # Displays list of users with friend codes r
         for element in users_with_game:
             output_txt = output_txt + '\n' + " - " + element
         await client.send_message(message.channel,output_txt)
+
+async def getUserCodes(message,username): # Displays list of users with friend codes registered for a specific game
+    if username[1] == '@':
+        good_user = await client.get_user_info(username[2:-1])
+        good_username = str(good_user)
+    else:
+        good_username = username
+    user_data = full_dict[good_username]
+    game_result = "List of games for user " + good_username[:-5] + ":"
+    for element in sorted(user_data.keys()):
+        game_result = game_result + '\n' + game_list[element] + ": " + user_data[element]
+    await client.send_message(message.channel,game_result)
+
 
 
 async def getCode(message,username, game): # Returns the friend code of a specific user and game
