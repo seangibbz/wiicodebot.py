@@ -191,10 +191,16 @@ async def getUsersAndCodesOf(message,game): # Displays list of users and friend 
         await client.send_message(message.channel,output_txt)
 
 
-async def help(message): # Bot user documentation
+async def help(message): # Bot user command documentation (!terminate and !backup excluded as they are dev commands)
     output_txt = "Available commands:"
-    for element in command_list:
-        output_txt = output_txt + '\n' + " - " + command_prefix + element
+    output_txt = output_txt + '\n' + " - " + command_prefix + "help: Displays a list of available commands"
+    output_txt = output_txt + '\n' + " - " + command_prefix + "setCode <GAMEID> <CODE>: Set a code for yourself for a specific game (e.g. " + command_prefix + "setCode WII1 8045-7532-5656-2676)"
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getCode <USER MENTION> <GAMEID>: Get a code for a specific user/game (e.g. " + command_prefix + "setCode @seangibbz#5609 WII1)"
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getAllGames: Get a list of all short-hand game codes
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getAllUsers: Get a list of all users with at least one registered friend code
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getUsersOf <GAMEID>: Get a list of users who have registered a code for a specific game (e.g. " + command_prefix + "getUsersOf WII1)"
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getUsersAndCodesOf <GAMEID>: Get a list of users who have registered a code for a specific game, as well as their corresponding friend codes (e.g. " + command_prefix + "getUsersAndCodesOf WII1)"
+    output_txt = output_txt + '\n' + " - " + command_prefix + "getUserCodes <USER MENTION>: Get a list of all registered friend codes for a specific user (e.g. " + command_prefix + "getUserCodes @seangibbz#5609)"
     await client.send_message(message.channel,output_txt)
 
 

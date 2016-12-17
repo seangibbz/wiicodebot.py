@@ -20,9 +20,9 @@ It handles user data regarding wii friend codes
 * A `getUsersOf` method to return a list of users who play a specific game
 * A `getUsersAndCodesOf` method to return a list of users and codes for a specific game
 * A `getUserCodes` method to get all registered friend codes of a specific user
+* `help` method for providing users with easy documentation about commands
 
 ## To Do:
-* `help()` method for providing users with easy documentation
 * Setting up the `terminate()` method so it’ll only execute if the user is a dev
 * Setting the script up on a cloud server so I don’t need to have my personal laptop on 24/7
 * Option to delete games/codes from a user’s information
